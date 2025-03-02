@@ -72,6 +72,26 @@ Matrix_Op_Result Matrix_Euclidean_Norm(Matrix *vector, scalar *norm) {
 	return OP_OK;
 }
 
+Matrix_Op_Result Matrix_SetElement(Matrix *m, const int r, const int c, scalar elem) {
+	if (r >= m->rows || c >= m->cols) {
+		return OP_INDEX_OUT_OF_BOUND;
+	}
+
+	MAT_ELEM(m, r, c) = elem;
+
+	return OP_OK;
+}
+
+Matrix_Op_Result Matrix_GetElement(Matrix *m, const int r, const int c, scalar *elem) {
+	if (r >= m->rows || c >= m->cols) {
+		return OP_INDEX_OUT_OF_BOUND;
+	}
+
+	*elem = MAT_ELEM(m, r, c);
+
+	return OP_OK;
+}
+
 void Matrix_FPrint(FILE *stream, Matrix *m) {
 	fprintf(stream, "[\n");
 	for (int i = 0; i < m->rows; i++) {
@@ -162,4 +182,31 @@ void Matrix_Scalar_Multiply(Matrix *m, scalar s) {
 			MAT_ELEM(m, i, j) = s * MAT_ELEM(m, i, j);
 		}
 	}
+}
+
+Matrix_Op_Result Matrix_Transpose(Matrix *src, Matrix *dst) {
+	if (src->rows != dst->rows || src->cols != dst->cols) {
+		return OP_DIMENSION_MISMATCH;
+	}
+
+	for (int i = 0; i < dst->rows; i++) {
+		for (int j = 0; j < dst->cols; j++) {
+			MAT_ELEM(dst, i, j) = MAT_ELEM(src, j, i);
+		}
+	}
+
+	return OP_OK;
+}
+
+Matrix_Op_Result Matrix_Trace(Matrix *m, scalar *trace) {
+	if (m->rows != m->cols) {
+		return OP_DIMENSION_MISMATCH;
+	}
+
+	*trace = 0;
+	for (int i = 0; i < m->rows; i++) {
+		*trace += MAT_ELEM(m, i, i);
+	}
+
+	return OP_OK;
 }

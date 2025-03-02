@@ -19,7 +19,8 @@ typedef enum {
 	OP_NOT_OK,
 	OP_DIMENSION_MISMATCH,
 	OP_SINGULAR_MATRIX,
-	OP_MEMORY_ERROR
+	OP_MEMORY_ERROR,
+	OP_INDEX_OUT_OF_BOUND
 } Matrix_Op_Result;
 
 Matrix_Op_Result Matrix_Init(Matrix *matrix, const int r, const int c);
@@ -29,16 +30,18 @@ void Matrix_Free(Matrix *matrix);
 
 Matrix_Op_Result Matrix_Euclidean_Norm(Matrix *vector, scalar *norm);
 
+Matrix_Op_Result Matrix_SetElement(Matrix *m, const int r, const int c, scalar elem);
+Matrix_Op_Result Matrix_GetElement(Matrix *m, const int r, const int c, scalar *elem);
 void Matrix_FPrint(FILE *stream, Matrix *m);
 Matrix_Op_Result Matrix_Copy(Matrix *src, Matrix *dst);
 Matrix_Op_Result Matrix_Add(Matrix *m1, Matrix *m2, Matrix *dst);
 Matrix_Op_Result Matrix_Sub(Matrix *m1, Matrix *m2, Matrix *dst);
 Matrix_Op_Result Matrix_Multiply(Matrix *m1, Matrix *m2, Matrix *dst);
 void Matrix_Scalar_Multiply(Matrix *m, scalar s);
-void Matrix_Transpose(Matrix *src, Matrix *dst);
+Matrix_Op_Result Matrix_Transpose(Matrix *src, Matrix *dst);
 Matrix_Op_Result Matrix_Rank(Matrix *m, int *rank);
 Matrix_Op_Result Matrix_Determinant(Matrix *m, scalar *det);
 Matrix_Op_Result Matrix_Invert(Matrix *src, Matrix *dst);
-Matrix_Op_Result Matrix_Trace(Matrix *src, scalar *trace);
+Matrix_Op_Result Matrix_Trace(Matrix *m, scalar *trace);
 
 #endif /* __MXL_H */
