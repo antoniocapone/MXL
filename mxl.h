@@ -1,6 +1,8 @@
 #ifndef __MXL_H
 #define __MXL_H
 
+#include <stdio.h>
+
 typedef float scalar;
 
 typedef struct {

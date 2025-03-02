@@ -7,7 +7,7 @@ Matrix_Op_Result Matrix_Init(Matrix *matrix, const int r, const int c) {
 	matrix->rows = r;
 	matrix->cols = c;
 	matrix->raw = malloc(r * c * sizeof(scalar));
-	if (matrix->raw != NULL) {
+	if (matrix->raw == NULL) {
 		return OP_MEMORY_ERROR;
 	}
 
@@ -27,6 +27,8 @@ Matrix_Op_Result Matrix_Identity(Matrix *m, const int r, const int c) {
 			}
 		}
 	}
+
+	return OP_OK;
 }
 
 Matrix_Op_Result Matrix_Zeros(Matrix *m, const int r, const int c) {
@@ -38,6 +40,8 @@ Matrix_Op_Result Matrix_Zeros(Matrix *m, const int r, const int c) {
 			MAT_ELEM(m, i, j) = 0;
 		}
 	}
+
+	return OP_OK;
 }
 
 void Matrix_Free(Matrix *matrix) {
@@ -69,14 +73,14 @@ Matrix_Op_Result Matrix_Euclidean_Norm(Matrix *vector, scalar *norm) {
 }
 
 void Matrix_FPrint(FILE *stream, Matrix *m) {
-	fprintf(stream, "[\t");
+	fprintf(stream, "[\n");
 	for (int i = 0; i < m->rows; i++) {
 		for (int j = 0; j < m->cols; j++) {
-			fprintf(stream, "%f,", MAT_ELEM(m, i, j));
+			fprintf(stream, "%.2f,", MAT_ELEM(m, i, j));
 		}
 		fprintf(stream, "\n");
 	}
-	fprintf(stream, "]");
+	fprintf(stream, "]\n\n");
 }
 
 Matrix_Op_Result Matrix_Copy(Matrix *src, Matrix *dst) {
@@ -122,6 +126,16 @@ Matrix_Op_Result Matrix_Sub(Matrix *m1, Matrix *m2, Matrix *dst) {
 	return OP_OK;
 }
 
+static scalar Matrix_Dot_RowCol(Matrix *m1, const int row_m1, Matrix *m2, const int col_m2) {
+	scalar res = 0;
+	/* Assume that m1 and m2 are both squared and same order */
+	for (int i = 0; i < m1->rows; i++) {
+		res += MAT_ELEM(m1, row_m1, i) * MAT_ELEM(m2, i, col_m2);
+	}
+
+	return res;
+}
+
 Matrix_Op_Result Matrix_Multiply(Matrix *m1, Matrix *m2, Matrix *dst) {
 	/* Check for m1 and m2 product compatibility */
 	if (m1->cols != m2->rows) {
@@ -140,16 +154,6 @@ Matrix_Op_Result Matrix_Multiply(Matrix *m1, Matrix *m2, Matrix *dst) {
 	}
 
 	return OP_OK;
-}
-
-static scalar Matrix_Dot_RowCol(Matrix *m1, const int row_m1, Matrix *m2, const int col_m2) {
-	scalar res = 0;
-	/* Assume that m1 and m2 are both squared and same order */
-	for (int i = 0; i < m1->rows; i++) {
-		res += MAT_ELEM(m1, row_m1, i) * MAT_ELEM(m2, i, col_m2);
-	}
-
-	return res;
 }
 
 void Matrix_Scalar_Multiply(Matrix *m, scalar s) {
